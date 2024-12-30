@@ -3,6 +3,8 @@ package de.tum.cit.ase.bomberquest;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
@@ -39,6 +41,7 @@ public class BomberQuestGame extends Game {
      * because the map should not be destroyed if we temporarily switch to another screen.
      */
     private GameMap map;
+    private AssetManager assetManager;
 
     /**
      * Constructor for BomberQuestGame.
@@ -62,6 +65,12 @@ public class BomberQuestGame extends Game {
         this.map = new GameMap(this); // Create a new game map (you should change this to load the map from a file instead)
         MusicTrack.BACKGROUND.play(); // Play some background music
         goToMenu(); // Navigate to the menu screen
+
+        assetManager = new AssetManager();
+        assetManager.load("destructible.png", Texture.class);
+        assetManager.load("indestructible.png", Texture.class);
+        assetManager.load("path.png", Texture.class);
+        assetManager.finishLoading(); // Ensures all assets are loaded before use
     }
 
     /**
@@ -114,4 +123,9 @@ public class BomberQuestGame extends Game {
         spriteBatch.dispose(); // Dispose the spriteBatch
         skin.dispose(); // Dispose the skin
     }
+
+    public AssetManager getAssetManager() {
+        return assetManager;
+    }
 }
+

@@ -44,7 +44,8 @@ public class Player implements Drawable {
         // Create the body in the world using the body definition.
         Body body = world.createBody(bodyDef);
         // Now we need to give the body a shape so the physics engine knows how to collide with it.
-        // We'll use a circle shape for the player.
+        // We'll use a circle shape for the player\]
+
         CircleShape circle = new CircleShape();
         // Give the circle a radius of 0.3 tiles (the player is 0.6 tiles wide).
         circle.setRadius(0.3f);

@@ -14,7 +14,11 @@ import com.badlogic.gdx.audio.Music;
 public enum MusicTrack {
     
     BACKGROUND("background.mp3", 0.2f);
-    
+
+    //GAME_OVER("copy.mp3",0.2f);
+    //WIN_THEME("win_theme.mp3",0.4f);
+
+
     /** The music file owned by this variant. */
     private final Music music;
     
@@ -31,4 +35,15 @@ public enum MusicTrack {
     public void play() {
         this.music.play();
     }
+    /*public void stop() {
+        this.music.stop();
+    }
+    public void pause() {
+        this.music.pause();
+    }
+    public static void stopAll() {
+        for (MusicTrack track : values()) {
+            track.music.stop();
+        }
+    }*/
 }
