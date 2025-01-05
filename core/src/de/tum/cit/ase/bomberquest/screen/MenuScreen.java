@@ -2,6 +2,7 @@ package de.tum.cit.ase.bomberquest.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -22,6 +23,7 @@ import de.tum.cit.ase.bomberquest.BomberQuestGame;
 public class MenuScreen implements Screen {
 
     private final Stage stage;
+    private Music menuMusic;
 
     /**
      * Constructor for MenuScreen. Sets up the camera, viewport, stage, and UI elements.
@@ -79,13 +81,18 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         // Dispose of the stage when screen is disposed
-        stage.dispose();
+        //stage.dispose();
+        menuMusic.stop();
+        menuMusic.dispose();
     }
 
     @Override
     public void show() {
         // Set the input processor so the stage can receive input events
-        Gdx.input.setInputProcessor(stage);
+        //Gdx.input.setInputProcessor(stage);
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("menu_music.mp3"));
+        menuMusic.setLooping(true);
+        menuMusic.play();
     }
 
     // The following methods are part of the Screen interface but are not used in this screen.

@@ -3,6 +3,8 @@ package de.tum.cit.ase.bomberquest.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,8 +12,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.map.Flowers;
+import de.tum.cit.ase.bomberquest.map.Player;
+import de.tum.cit.ase.bomberquest.texture.Bomb;
 import de.tum.cit.ase.bomberquest.texture.Drawable;
 import de.tum.cit.ase.bomberquest.map.GameMap;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -38,6 +45,12 @@ public class GameScreen implements Screen {
     private final GameMap map;
     private final Hud hud;
     private final OrthographicCamera mapCamera;
+    private Music backgroundMusic;
+    private Sound bombSound;
+    private Sound explosionSound;
+    private Sound powerUpSound;
+    private List<Bomb> bombs;
+
 
     /**
      * Constructor for GameScreen. Sets up the camera and font.
@@ -52,6 +65,10 @@ public class GameScreen implements Screen {
         // Create and configure the camera for the game view
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
+        bombSound = Gdx.audio.newSound(Gdx.files.internal("bomb_drop.mp3"));
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("bomb_explosion.mp3"));
+        powerUpSound = Gdx.audio.newSound(Gdx.files.internal("power_up.mp3"));
+        bombs = new ArrayList<>();
     }
     
     /**
@@ -64,26 +81,53 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.goToMenu();
         }
-        
+
         // Clear the previous frame from the screen, or else the picture smears
         ScreenUtils.clear(Color.BLACK);
-        
+
         // Cap frame time to 250ms to prevent spiral of death
         float frameTime = Math.min(deltaTime, 0.250f);
-        
+
         // Update the map state
         map.tick(frameTime);
-        
+
         // Update the camera
         updateCamera();
-        
+
         // Render the map on the screen
         renderMap();
-        
+
         // Render the HUD on the screen
         hud.render();
+
+        // Update bombs and check for explosions
+        for (Bomb bomb : bombs) {
+            bomb.update(deltaTime);
+        }
+
+        // Render all bombs
+        spriteBatch.begin();
+        for (Bomb bomb : bombs) {
+            if (!bomb.isExploded()) {
+                draw(spriteBatch, bomb);
+            }
+        }
+        spriteBatch.end();
+
+        // Place bomb when spacebar is pressed
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            Player player = map.getPlayer();  // Get player from map
+            placeBomb((int) player.getX(), (int) player.getY());  // Place bomb at player's position
+        }
     }
-    
+
+    public void placeBomb(int x, int y) {
+        bombs.add(new Bomb(x, y));  // Add a new bomb to the list at the specified position
+    }
+
+
+
+
     /**
      * Updates the camera to match the current state of the game.
      * Currently, this just centers the camera at the origin.
@@ -154,6 +198,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("gameplay_music.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
 
     }
 
@@ -163,6 +210,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        backgroundMusic.stop();
+        backgroundMusic.dispose();
     }
+
 
 }
